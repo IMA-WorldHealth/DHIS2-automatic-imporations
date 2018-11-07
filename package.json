@@ -1,0 +1,21 @@
+{
+  "name": "dhis2-automation-scripts",
+  "version": "1.0.0",
+  "description": "A series of scripts to automate DHIS2 work for the team",
+  "main": "chrone.js",
+  "dependencies": {
+    "node-schedule": "^1.3.0",
+    "nodemailer": "^4.6.8",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.5"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "DHIS2"
+  ],
+  "author": "Jeremie Lodie (@jeremielodi)",
+  "license": "MIT"
+}
