@@ -1,1 +1,20 @@
 credentials.json
+
+
+# ignore editor-specific working files
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+.idea/*
+*~
+
+# ignore npm/node modules
+node_modules/
+npm-debug.log
+
+# ignore error files
+yarn-error.log
+*.log
+
+# ignore visual studio files
+.vscode/*
+nbproject/*
