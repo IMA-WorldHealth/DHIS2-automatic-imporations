@@ -23,6 +23,7 @@ var j = schedule.scheduleJob(rule, function () {
   ExecuteAndCatchErrors();
 });
 
+
 function ExecuteAndCatchErrors() {
   try {
     const auth = credential.DHIS2;
@@ -32,7 +33,6 @@ function ExecuteAndCatchErrors() {
     completudeCS.postData(auth);
     completudeHGR.postData(auth);
     amox.postData(auth);
-
   } catch (error) {
     console.log('global error');
     console.log(error);
