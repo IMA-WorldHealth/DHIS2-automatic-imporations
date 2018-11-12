@@ -1,19 +1,19 @@
-const fs = require('fs');
-const request = require('request-promise-native');
 const mailer = require('./mailer');
+const API = require('./lib/dhis2-api');
 
 module.exports.postData = (auth) => {
-  // authentication                                                                                                                                                                                                 
 
-  (async () => {
-    try {
-      // download the Data                                                                                                                                                                                       
-      let source = await request.get(`
-        https://ima-assp.org/api/29/analytics/dataValueSet.json?dimension=pe:LAST_3_MONTHS&dimension=ou:LEVEL-5;s7ZjqzKnWsJ&filter=LyVu0GDia40:N68nOMNKQNK&dimension=dx:iNDXhUBhi7G;BYqAhRZhTtQ;SC9BF8zIbL7;G0pSyUFT7on&displayProperty=NAME&aggregationType=MIN`, {
-        auth
-      });
+  const api = new API({
+    credentials: auth,
+    url: `https://ima-assp.org/api/29/analytics/dataValueSet.json`
+  });
 
-      source = JSON.parse(source);
+  const query = `dimension=pe:LAST_3_MONTHS&dimension=ou:LEVEL-5;s7ZjqzKnWsJ&filter=LyVu0GDia40:N68nOMNKQNK&dimension=dx:iNDXhUBhi7G;BYqAhRZhTtQ;SC9BF8zIbL7;G0pSyUFT7on&displayProperty=NAME&aggregationType=MIN`;
+  // download the Data                                                                                                                                                                                       
+  api.analytics({
+      query
+    })
+    .then(source => {
 
       const dataValues = source.dataValues;
 
@@ -39,22 +39,15 @@ module.exports.postData = (auth) => {
       });
       //console.log(result);
 
-      request({
-        //url: 'https://dev.ima-assp.org/api/dataValueSets',
-        url: 'https://ima-assp.org/api/dataValueSets',
-        method: 'POST',
-        json: result,
-        auth
-      }, function (error, response, body) {
-        if (!error) {
-          mailer.sendMail('amox', 'DHIS2 automatic importations for amox');
-        }
-        console.log(body);
-        console.log(error);
+      return api.postData({
+        data: result,
+        url: 'https://ima-assp.org/api/dataValueSets'
       });
+    })
+    .then(() => {
+      mailer.sendMail('amox', 'DHIS2 automatic importations for amox');
+    }).catch(err => {
+      mailer.sendMail('amox Importation fails', 'Importation fails for amox' + JSON.stringify(err));
+    });
 
-    } catch (e) {
-      console.error('An error occured:', e);
-    }
-  })();
 }
