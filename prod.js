@@ -24,10 +24,6 @@ module.exports.postData = (auth) => {
 			});
 		}).then(source2 => {
 
-			source = JSON.parse(source);
-
-			source2 = JSON.parse(source2);
-
 			const dataValues = source.dataValues;
 
 			const dataMap = {};
