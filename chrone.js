@@ -7,6 +7,7 @@ const prod = require('./prod');
 const pcima = require('./pcima');
 const completudeCS = require('./completudeCS');
 const completudeHGR = require('./completudeHGR');
+const survepi = require('./survepi');
 const credential = require('./credentials.json');
 
 //Schedule execution
@@ -33,6 +34,7 @@ function ExecuteAndCatchErrors() {
     completudeCS.postData(auth);
     completudeHGR.postData(auth);
     amox.postData(auth);
+    survepi.postData(auth);
   } catch (error) {
     console.log('global error');
     console.log(error);
