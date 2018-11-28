@@ -1,19 +1,17 @@
-const fs = require('fs');
-const request = require('request-promise-native');
+const API = require('./lib/dhis2-api');
 const mailer = require('./mailer');
 
 module.exports.postData = (auth) => {
 
-  (async () => {
-    try {
+  const api = new API({
+    credentials: auth,
+    url: `https://ima-assp.org/api/analytics/dataValueSet.json`
+  });
 
-      // download the Data                                                                                                                                                                                       
-      let source = await request.get(`https://ima-assp.org/api/analytics/dataValueSet.json?dimension=pe:THIS_QUARTER;LAST_QUARTER&dimension=dx:pJxcWVobpl2.ACTUAL_REPORTS&dimension=nfFNhVrBFwh:r0kbOtny4Fr&dimension=ou:OU_GROUP-MCkcTOULWEW;I8CuQpdBQfP;D15NtionqkH;uyuwe6bqphf;iu4Zj3Zq39m;mnOXJ2Oa5U7&displayProperty=NAME`, {
-        auth
-      });
-
-
-      source = JSON.parse(source);
+  const query = `dimension=pe:THIS_QUARTER;LAST_QUARTER&dimension=dx:pJxcWVobpl2.ACTUAL_REPORTS&dimension=nfFNhVrBFwh:r0kbOtny4Fr&dimension=ou:OU_GROUP-MCkcTOULWEW;I8CuQpdBQfP;D15NtionqkH;uyuwe6bqphf;iu4Zj3Zq39m;mnOXJ2Oa5U7&displayProperty=NAME`;
+  // download the Data                                                                                                                                                                                       
+  api.analytics({ query })
+    .then(source => {
 
       const dataValues = source.dataValues;
 
@@ -40,24 +38,16 @@ module.exports.postData = (auth) => {
         });
 
       });
-      //console.log(result);
-
-      request({
-        //url: 'https://dev.ima-assp.org/api/dataValueSets',
-        url: 'https://ima-assp.org/api/dataValueSets',
-        method: 'POST',
-        json: result,
-        auth
-      }, function (error, response, body) {
-        if (!error) {
-          mailer.sendMail('completudeHGR', 'DHIS2 automatic importations for completudeHGR');
-        }
-        console.log(body);
-        console.log(error);
+    
+      return api.postData({
+        data: result,
+        url: 'https://ima-assp.org/api/dataValueSets'
       });
+    })
+    .then(() => {
+      mailer.sendMail('completudeHGR', 'DHIS2 automatic importations for completudeHGR');
+    }).catch(err => {
+      mailer.sendMail('completudeHGR Importation fails', 'Importation fails for completudeHGR ' + JSON.stringify(err));
+    });
 
-    } catch (e) {
-      console.error('An error occured:', e);
-    }
-  })();
 }

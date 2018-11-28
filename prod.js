@@ -1,31 +1,28 @@
-const fs = require('fs');
-const request = require('request-promise-native');
+const API = require('./lib/dhis2-api');
 const mailer = require('./mailer');
+
 module.exports.postData = (auth) => {
 
-
-	(async () => {
-		try {
-
-			// create the pyramid of health                                                                                                                                                                               
-			// await request.post(`${API}/execute`, { auth });                                                                                                                                                               
-
-			// download the dataset                                                                                                                                                                                       
-			let source = await request.get(`
-        https://ima-assp.org/api/analytics/dataValueSet.json?dimension=dx:DQiMxAlXTOe&dimension=pe:LAST_3_MONTHS&dimension=qRZwzI8PYTJ:XZqSZpJycKJ&dimension=ou:LEVEL-5;s7ZjqzKnWsJ&displayProperty=NAME`, {
-				auth
+	const api = new API({
+		credentials: auth,
+		url: `https://ima-assp.org/api/analytics/dataValueSet.json`
+	});
+	let source;
+	const query = 'dimension=dx:DQiMxAlXTOe&dimension=pe:LAST_3_MONTHS&dimension=qRZwzI8PYTJ:XZqSZpJycKJ&dimension=ou:LEVEL-5;s7ZjqzKnWsJ&displayProperty=NAME';
+	
+	const url2 = 'https://ima-assp.org/api/organisationUnits';
+	const query2 = 'fields=id,name,dataSets[id,name]&filter=dataSets.id:in:[zdGNLhp4xAB,pJxcWVobpl2]&paging=false';
+	// download the Data                                                                                                                                                                                       
+	api.analytics({
+			query
+		})
+		.then(_source => {
+			source = _source;
+			return api.analytics({
+				url: url2,
+				query: query2
 			});
-
-			// process the pyramid into key/value pairs                                                                                                                                                                   
-
-			let source2 = await request.get(
-				`https://ima-assp.org/api/organisationUnits?fields=id,name,dataSets[id,name]&filter=dataSets.id:in:[zdGNLhp4xAB,pJxcWVobpl2]&paging=false`, {
-					auth
-				});
-
-			source = JSON.parse(source);
-
-			source2 = JSON.parse(source2);
+		}).then(source2 => {
 
 			const dataValues = source.dataValues;
 
@@ -111,21 +108,15 @@ module.exports.postData = (auth) => {
 			});
 			// console.log(result);
 
-			request({
-				url: 'https://ima-assp.org/api/completeDataSetRegistrations',
-				method: 'POST',
-				json: result,
-				auth
-			}, function (error, response, body) {
-
-				if (!error) {
-					mailer.sendMail('prod', 'DHIS2 automatic importations for prod');
-				}
-				console.log(body);
+			return api.postData({
+				data: result,
+				url: 'https://ima-assp.org/api/completeDataSetRegistrations'
 			});
+		})
+		.then(() => {
+			mailer.sendMail('prod', 'DHIS2 automatic importations for prod');
+		}).catch(err => {
+			mailer.sendMail('prod Importation fails', 'Importation fails for prod ' + JSON.stringify(err));
+		});
 
-		} catch (e) {
-			console.error('An error occured:', e);
-		}
-	})();
 }

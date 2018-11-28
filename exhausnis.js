@@ -1,20 +1,17 @@
-const fs = require('fs');
-const request = require('request-promise-native');
+const API = require('./lib/dhis2-api');
 const mailer = require('./mailer');
 
 module.exports.postData = (auth) => {
 
-  (async () => {
-    try {
+  const api = new API({
+    credentials: auth,
+    url: `https://ima-assp.org/api/analytics/dataValueSet.json`
+  });
 
-      // download the Data                                                                                                                                                                                       
-      let source = await request.get(`
-        https://ima-assp.org/api/analytics/dataValueSet.json?dimension=dx:WgZr7FrDfVn;DQiMxAlXTOe;kGmdIbd3mbn;zcH4sipFcUr;cTLKwfG8pSv;t2O2Sf4Kngw;xmbsTpMq7wx;V7bWComPcDJ;P9o3bL76s2r;eCYnE89bKmD;PFCz0A2SBtd;w8zw7gMZQvu&dimension=pe:LAST_3_MONTHS&dimension=ou:LEVEL-4;s7ZjqzKnWsJ&displayProperty=NAME`, {
-        auth
-      });
-
-      source = JSON.parse(source);
-
+  const query = `dimension=dx:WgZr7FrDfVn;DQiMxAlXTOe;kGmdIbd3mbn;zcH4sipFcUr;cTLKwfG8pSv;t2O2Sf4Kngw;xmbsTpMq7wx;V7bWComPcDJ;P9o3bL76s2r;eCYnE89bKmD;PFCz0A2SBtd;w8zw7gMZQvu&dimension=pe:LAST_3_MONTHS&dimension=ou:LEVEL-4;s7ZjqzKnWsJ&displayProperty=NAME`;
+  // download the Data                                                                                                                                                                                       
+  api.analytics({ query })
+    .then(source => {
       const dataValues = source.dataValues;
       //const dataValues = request1.dataValues;
 
@@ -48,23 +45,15 @@ module.exports.postData = (auth) => {
       });
       //console.log(result);
 
-      request({
-        //url: 'https://dev.ima-assp.org/api/dataValueSets',
-        url: 'https://ima-assp.org/api/dataValueSets',
-        method: 'POST',
-        json: result,
-        auth
-      }, function (error, response, body) {
-        if (!error) {
-          mailer.sendMail('exhausnis', 'DHIS2 automatic importations for exhausnis');
-        }
-        console.log(body);
-        console.log(error);
-
+      return api.postData({
+        data: result,
+        url: 'https://ima-assp.org/api/dataValueSets'
       });
+    })
+    .then(() => {
+      mailer.sendMail('exhausnis', 'DHIS2 automatic importations for exhausnis');
+    }).catch(err => {
+      mailer.sendMail('exhausnis Importation fails', 'Importation fails for exhausnis ' + JSON.stringify(err));
+    });
 
-    } catch (e) {
-      console.error('An error occured:', e);
-    }
-  })();
 }
