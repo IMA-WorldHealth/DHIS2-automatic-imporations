@@ -114,9 +114,9 @@ module.exports.postData = (auth) => {
 			});
 		})
 		.then(() => {
-			mailer.sendMail('prod', 'DHIS2 automatic importations for prod');
-		}).catch(err => {
-			mailer.sendMail('prod Importation fails', 'Importation fails for prod ' + JSON.stringify(err));
-		});
+      mailer.sendMail('success!!! Import Completness for FOSA', 'Import Completness for FOSA');
+    }).catch(err => {
+      mailer.sendMail('Fail!!! Import Completness for FOSA', 'Fail!!! Import Completness for FOSA' + JSON.stringify(err));
+    });
 
 }

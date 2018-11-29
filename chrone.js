@@ -1,12 +1,13 @@
 var schedule = require('node-schedule');
 
 //calling file exten
-const amox = require('./amox');
-const exhausnis = require('./exhausnis');
-const prod = require('./prod');
-const pcima = require('./pcima');
-const completudeCS = require('./completudeCS');
-const completudeHGR = require('./completudeHGR');
+const amoxycilline_min = require('./amoxycilline_min');
+const exhaustivite_snis = require('./exhaustivite_snis');
+const completude_fosa = require('./completude_fosa');
+const completude_pcima = require('./completude_pcima');
+const completude_cs = require('./completude_cs');
+const completude_hgr = require('./completude_hgr');
+const completude_survepi = require('./completude_survepi');
 const credential = require('./credentials.json');
 
 //Schedule execution
@@ -27,12 +28,13 @@ var j = schedule.scheduleJob(rule, function () {
 function ExecuteAndCatchErrors() {
   try {
     const auth = credential.DHIS2;
-    exhausnis.postData(auth);
-    prod.postData(auth);
-    pcima.postData(auth);
-    completudeCS.postData(auth);
-    completudeHGR.postData(auth);
-    amox.postData(auth);
+    exhaustivite_snis.postData(auth);
+    completude_fosa.postData(auth);
+    completude_pcima.postData(auth);
+    completude_cs.postData(auth);
+    completude_hgr.postData(auth);
+    completude_survepi.postData(auth);
+    amoxycilline_min.postData(auth);
   } catch (error) {
     console.log('global error');
     console.log(error);

@@ -1,5 +1,5 @@
-const API = require('./lib/dhis2-api');
 const mailer = require('./mailer');
+const API = require('./lib/dhis2-api');
 
 module.exports.postData = (auth) => {
 
@@ -7,18 +7,13 @@ module.exports.postData = (auth) => {
     credentials: auth,
     url: `https://ima-assp.org/api/analytics/dataValueSet.json`
   });
-  let source;
-  const query = 'dimension=dx:UsAgtHx3KL5;ZPiG2SbHdep&dimension=pe:LAST_3_MONTHS&dimension=ou:LEVEL-5;s7ZjqzKnWsJ&filter=ilS9AgMxMQk:BCKnyqCLwjB&displayProperty=NAME';
-  const query2 = 'fields=id,name,dataSets[id,name]&filter=dataSets.id:in:[IJohTAjdpcp,BJ2R8BcwI0V]&paging=false';
-  const url2 = 'https://ima-assp.org/api/organisationUnits';
+
+  const query = `dimension=pe:LAST_52_WEEKS&dimension=ou:LEVEL-5;s7ZjqzKnWsJ&filter=nfFNhVrBFwh:yE7cy94lS87;r0kbOtny4Fr&dimension=dx:cEApqsZvmn5;cQbiOs2lTAL;FPN2IJCJ8gc;ua4PkR72PSp;ZkRS89FoBz3;y0BquzOLBHE;zFxILdvAS7m;GuhkFtaibix;ER5XwifODpR;jezOUtM6pRE;pc68Q1jSe1x;oAxYp8kZFHF;SqZrut7CiR8;MGbfl6DBR2o;CMiXfqulkeH;GhLnpzFZ7L3;QBaNx8Sy1QW;fRUIniV6k8A;KlNYT9xHzAP;ubNSIA9OF7D;oYNAocdPMlA;m7OcflQ1KuZ;RcPAsdpKMTN;CFDDPL9jFnP;A6oPe1Z4Szc;NGbQlnREUv0;mAoysriVUJT;NhUW2L9h20t;gozQZsfJ7R5;oG2DIcNLFMc;LO4ph2D3l2a;HPMgIC2SO5g;yOnluN2UvTV;iqqmzdrtylI;wF968tBudKo;G9KomsNxrje;D3MP5WBYKdd;w5fVmpsLe8Y&displayProperty=NAME`;
   // download the Data                                                                                                                                                                                       
   api.analytics({
       query
     })
-    .then(_source => {
-      source = _source;
-      return api.analytics({ url: url2, query: query2 });
-    }).then(source2 => {
+    .then(source => {
 
       const dataValues = source.dataValues;
 
@@ -59,10 +54,6 @@ module.exports.postData = (auth) => {
 
       });
 
-      //  lastdata contient des tableaus car les donnees etaient regrouper en period
-      // lastdata = [[{}, {}], [{}, {}]]
-      // on le rend sous une forme simple d'un tableau d'objets
-      // lastdata = [{}, {}]
       var lastDatatemp = [];
       lastData.forEach(row => {
         row.forEach(ligne => {
@@ -72,21 +63,6 @@ module.exports.postData = (auth) => {
 
       lastData = lastDatatemp;
 
-      const datasetUUID = ['IJohTAjdpcp', 'BJ2R8BcwI0V']
-      const organisationUnits = source2.organisationUnits;
-      datasetMap = {};
-
-      organisationUnits.forEach(orgUnit => {
-        const datasets = orgUnit.dataSets;
-        datasets.forEach(dataset => {
-          if (datasetUUID.includes(dataset.id)) {
-            datasetMap[orgUnit.id] = dataset.id;
-          }
-        })
-
-      })
-
-
       const result = {
         completeDataSetRegistrations: []
       };
@@ -95,7 +71,7 @@ module.exports.postData = (auth) => {
 
         result.completeDataSetRegistrations.push({
           "period": ligne.period,
-          "dataSet": datasetMap[ligne.orgUnit],
+          "dataSet": "gzQSYZIDZYF",
           "organisationUnit": ligne.orgUnit,
           "attributeOptionCombo": "c6PwdArn3fZ",
           "date": ligne.created,
@@ -109,8 +85,9 @@ module.exports.postData = (auth) => {
       });
     })
     .then(() => {
-      mailer.sendMail('pcima', 'DHIS2 automatic importations for pcima');
+      mailer.sendMail('success!!! Import completness for SURVEPI', 'Import completness for SURVEPI');
     }).catch(err => {
-      mailer.sendMail('pcima Importation fails', 'Importation fails for pcima' + JSON.stringify(err));
+      mailer.sendMail('Fail!!! Import completness for SURVEPI', 'Fail!!! Import completness for SURVEPI' + JSON.stringify(err));
     });
+
 }
