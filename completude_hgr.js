@@ -45,9 +45,9 @@ module.exports.postData = (auth) => {
       });
     })
     .then(() => {
-      mailer.sendMail('completudeHGR', 'DHIS2 automatic importations for completudeHGR');
+      mailer.sendMail('success!!! Import Completness for HGR', 'Import Completness for HGR');
     }).catch(err => {
-      mailer.sendMail('completudeHGR Importation fails', 'Importation fails for completudeHGR ' + JSON.stringify(err));
+      mailer.sendMail('Fail!!! Import Completness for HGR', 'Fail!!! Import Completness for HGR' + JSON.stringify(err));
     });
 
 }

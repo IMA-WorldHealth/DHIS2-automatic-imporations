@@ -51,9 +51,9 @@ module.exports.postData = (auth) => {
       });
     })
     .then(() => {
-      mailer.sendMail('exhausnis', 'DHIS2 automatic importations for exhausnis');
+      mailer.sendMail('success!!! Import Exhaustivity SNIS Data', 'Import Exhaustivity SNIS Data');
     }).catch(err => {
-      mailer.sendMail('exhausnis Importation fails', 'Importation fails for exhausnis ' + JSON.stringify(err));
+      mailer.sendMail('Fail!!! Import Exhaustivity SNIS Data', 'Fail!!! Import Exhaustivity SNIS Data' + JSON.stringify(err));
     });
 
 }

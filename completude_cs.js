@@ -1,43 +1,42 @@
-const mailer = require('./mailer');
 const API = require('./lib/dhis2-api');
+const mailer = require('./mailer');
 
 module.exports.postData = (auth) => {
 
   const api = new API({
     credentials: auth,
-    url: `https://ima-assp.org/api/29/analytics/dataValueSet.json`
+    url: `https://ima-assp.org/analytics/dataValueSet.json`
   });
 
-  const query = `dimension=pe:LAST_3_MONTHS&dimension=ou:LEVEL-5;s7ZjqzKnWsJ&filter=LyVu0GDia40:N68nOMNKQNK&dimension=dx:iNDXhUBhi7G;BYqAhRZhTtQ;SC9BF8zIbL7;G0pSyUFT7on&displayProperty=NAME&aggregationType=MIN`;
+  const query = `dimension=pe:THIS_QUARTER;LAST_QUARTER&dimension=dx:zdGNLhp4xAB.ACTUAL_REPORTS&dimension=nfFNhVrBFwh:yE7cy94lS87&dimension=ou:OU_GROUP-MCkcTOULWEW;I8CuQpdBQfP;D15NtionqkH;uyuwe6bqphf;iu4Zj3Zq39m;mnOXJ2Oa5U7&displayProperty=NAME`;
   // download the Data                                                                                                                                                                                       
-  api.analytics({
-      query
-    })
+  api.analytics({ query })
     .then(source => {
-
       const dataValues = source.dataValues;
 
       const result = {
         dataValues: []
       };
-      const amox = "UzeZsiFCN83";
+      const completude = "ZiDq193PgqD";
 
       datasetMap = {};
 
       //console.log(source);
+
+
       dataValues.forEach(source => {
         // console.log('source element : ', source);
+        let data = Math.round(source.value / 3);
         result.dataValues.push({
-          "dataElement": amox,
+          "dataElement": completude,
           "period": source.period,
           "orgUnit": source.orgUnit,
-          "value": source.value,
+          "value": data,
           "storedBy": "IMA " + source.created,
           "created": source.created
         });
 
       });
-      //console.log(result);
 
       return api.postData({
         data: result,
@@ -45,9 +44,9 @@ module.exports.postData = (auth) => {
       });
     })
     .then(() => {
-      mailer.sendMail('amox', 'DHIS2 automatic importations for amox');
+      mailer.sendMail('success!!! Import Completness for CS', 'Import Completness for CS');
     }).catch(err => {
-      mailer.sendMail('amox Importation fails', 'Importation fails for amox' + JSON.stringify(err));
+      mailer.sendMail('Fail!!! Import Completness for CS', 'Fail!!! Import Completness for CS' + JSON.stringify(err));
     });
 
 }
