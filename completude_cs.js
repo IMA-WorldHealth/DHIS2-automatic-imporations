@@ -5,7 +5,7 @@ module.exports.postData = (auth) => {
 
   const api = new API({
     credentials: auth,
-    url: `https://ima-assp.org/analytics/dataValueSet.json`
+    url: `https://ima-assp.org/api/analytics/dataValueSet.json`
   });
 
   const query = `dimension=pe:THIS_QUARTER;LAST_QUARTER&dimension=dx:zdGNLhp4xAB.ACTUAL_REPORTS&dimension=nfFNhVrBFwh:yE7cy94lS87&dimension=ou:OU_GROUP-MCkcTOULWEW;I8CuQpdBQfP;D15NtionqkH;uyuwe6bqphf;iu4Zj3Zq39m;mnOXJ2Oa5U7&displayProperty=NAME`;
