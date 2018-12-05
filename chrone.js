@@ -8,6 +8,7 @@ const completude_pcima = require('./completude_pcima');
 const completude_cs = require('./completude_cs');
 const completude_hgr = require('./completude_hgr');
 const completude_survepi = require('./completude_survepi');
+const exhaustivite_med = require('./exhaustivite_med');
 const credential = require('./credentials.json');
 
 //Schedule execution
@@ -28,13 +29,14 @@ var j = schedule.scheduleJob(rule, function () {
 function ExecuteAndCatchErrors() {
   try {
     const auth = credential.DHIS2;
-    exhaustivite_snis.postData(auth);
     completude_fosa.postData(auth);
     completude_pcima.postData(auth);
     completude_cs.postData(auth);
     completude_hgr.postData(auth);
     completude_survepi.postData(auth);
     amoxycilline_min.postData(auth);
+    exhaustivite_snis.postData(auth);
+    exhaustivite_med.postData(auth);
   } catch (error) {
     console.log('global error');
     console.log(error);
