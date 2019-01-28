@@ -9,7 +9,9 @@ const completude_cs = require('./completude_cs');
 const completude_hgr = require('./completude_hgr');
 const completude_survepi = require('./completude_survepi');
 const exhaustivite_med = require('./exhaustivite_med');
+const codesa = require('./codesa');
 const credential = require('./credentials.json');
+
 
 //Schedule execution
 var rule = new schedule.RecurrenceRule();
@@ -37,6 +39,7 @@ function ExecuteAndCatchErrors() {
     amoxycilline_min.postData(auth);
     exhaustivite_snis.postData(auth);
     exhaustivite_med.postData(auth);
+    codesa.postData(auth);
   } catch (error) {
     console.log('global error');
     console.log(error);
