@@ -4,7 +4,8 @@ const credential = require('./credentials.json');
 
 exports.sendMail = sendMail;
 
-function sendMail(descrition, subject) {
+function sendMail(subject, descrition) {
+
   var transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
