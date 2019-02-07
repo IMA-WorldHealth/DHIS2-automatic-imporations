@@ -57,7 +57,13 @@ module.exports.postData = (auth) => {
       var lastDatatemp = [];
       lastData.forEach(row => {
         row.forEach(ligne => {
-          lastDatatemp.push(ligne);
+          //---------------------------------------------------------
+          //Elimination de ligne avec Zéro
+          if (ligne.value > 0) {
+            lastDatatemp.push(ligne);
+          }
+          //----------------------------------------------------------
+          // lastDatatemp.push(ligne);
         });
       });
 

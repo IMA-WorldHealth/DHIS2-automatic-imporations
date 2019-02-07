@@ -17,7 +17,10 @@ module.exports.postData = (auth) => {
     })
     .then(_source => {
       source = _source;
-      return api.analytics({ url: url2, query: query2 });
+      return api.analytics({
+        url: url2,
+        query: query2
+      });
     }).then(source2 => {
 
       const dataValues = source.dataValues;
@@ -66,7 +69,13 @@ module.exports.postData = (auth) => {
       var lastDatatemp = [];
       lastData.forEach(row => {
         row.forEach(ligne => {
-          lastDatatemp.push(ligne);
+          //---------------------------------------------------------
+          //Elimination de ligne avec Zéro
+          if (ligne.value > 0) {
+            lastDatatemp.push(ligne);
+          }
+          //----------------------------------------------------------
+          // lastDatatemp.push(ligne);
         });
       });
 
