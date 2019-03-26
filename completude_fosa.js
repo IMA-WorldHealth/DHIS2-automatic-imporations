@@ -128,6 +128,7 @@ module.exports.postData = (auth) => {
             mailer.sendMail('success!!! Import Completness for FOSA', 'Import Completness for FOSA');
         }).catch(err => {
             mailer.sendMail('Fail!!! Import Completness for FOSA' + JSON.stringify(err), 'Fail!!! Import Completness for FOSA');
+            //mailer.sendMail('Fail!!! Import Completness for FOSA' + result, 'Fail!!! Import Completness for FOSA');
         });
 
 }
