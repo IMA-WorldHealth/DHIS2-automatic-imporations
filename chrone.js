@@ -11,7 +11,7 @@ const completude_survepi = require('./completude_survepi');
 const exhaustivite_med = require('./exhaustivite_med');
 const exhaustivite_nut = require('./exhaustivite_nut');
 const codesa = require('./codesa');
-const credential = require('./credentials.json');
+const credential = require('./credentials/credentials.json');
 
 
 //Schedule execution

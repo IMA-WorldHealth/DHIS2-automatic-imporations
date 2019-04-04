@@ -53,7 +53,8 @@ module.exports.postData = (auth) => {
 
             return api.postData({
                 data: result,
-                url: 'https://ima-assp.org/api/dataValueSets?importStrategy=CREATE'
+                //url: 'https://ima-assp.org/api/dataValueSets?importStrategy=CREATE'
+                url: 'https://ima-assp.org/api/dataValueSets?skipAudit=true'
             });
         })
         .then((response) => {
