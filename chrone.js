@@ -42,7 +42,7 @@ function ExecuteAndCatchErrors() {
     codesa.postData(auth);
     exhaustivite_nut.postData(auth);
   } catch (error) {
-    console.log('global error');
+    console.log('global error occurred');
     console.log(error);
   }
 }
