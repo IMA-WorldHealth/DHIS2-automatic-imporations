@@ -17,7 +17,7 @@ const credential = require('./credentials/credentials.json');
 //Schedule execution
 var rule = new schedule.RecurrenceRule();
 // rule.dayOfWeek = [0, new schedule.Range(4, 6)];
-rule.hour = 2;
+rule.hour = 0;
 rule.minute = 0;
 
 console.log('Starting Script');
