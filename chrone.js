@@ -21,7 +21,6 @@ rule.hour = 0;
 rule.minute = 0;
 
 console.log('Starting Script');
-
 // Using function
 var j = schedule.scheduleJob(rule, function () {
   console.log('Scheduling jobs');
