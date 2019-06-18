@@ -42,9 +42,7 @@ module.exports.postData = (auth) => {
                     "storedBy": "IMA " + source.created,
                     "created": source.created
                 });
-
             });
-            console.log(result);
             return api.postData({
                 data: result,
                 //url: 'https://ima-assp.org/api/dataValueSets?importStrategy=CREATE'
