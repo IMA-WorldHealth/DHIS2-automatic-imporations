@@ -11,8 +11,7 @@ module.exports.postData = async (auth) => {
   });
 
   const PERIOD = 'LAST_3_MONTHS';
-
-  const query = `dimension=dx:DQiMxAlXTOe&dimension=pe:${PERIOD}&dimension=qRZwzI8PYTJ:XZqSZpJycKJ&dimension=ou:LEVEL-5;s7ZjqzKnWsJ&displayProperty=NAME`'
+  const query = `dimension=dx:DQiMxAlXTOe&dimension=pe:${PERIOD}&dimension=qRZwzI8PYTJ:XZqSZpJycKJ&dimension=ou:LEVEL-5;s7ZjqzKnWsJ&displayProperty=NAME`;
 
   const orgUnitURL = 'https://ima-assp.org/api/organisationUnits';
   const orgUnitQuery = 'fields=id,name,dataSets[id,name]&filter=dataSets.id:in:[zdGNLhp4xAB,pJxcWVobpl2]&paging=false';
@@ -96,8 +95,6 @@ module.exports.postData = async (auth) => {
       'Fail!!! Import Completness for FOSA',
     );
   }
-
-  console.log('over it.');
 };
 
 function computePeriodDates(period) {

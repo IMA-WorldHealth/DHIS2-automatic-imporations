@@ -1,5 +1,3 @@
-credentials.json
-
 
 # ignore editor-specific working files
 [._]*.s[a-w][a-z]
@@ -18,3 +16,6 @@ yarn-error.log
 # ignore visual studio files
 .vscode/*
 nbproject/*
+
+#ignore credential files
+./credentials/

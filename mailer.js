@@ -1,5 +1,5 @@
 const nodemailer = require('nodemailer');
-const credential = require('./credentials.json');
+const credential = require('./credentials/credentials.json');
 
 
 exports.sendMail = sendMail;
