@@ -1,122 +1,122 @@
+const _ = require('lodash');
+const fs = require('fs');
+const qs = require('querystring');
 const API = require('./lib/dhis2-api');
 const mailer = require('./mailer');
 
-module.exports.postData = (auth) => {
+module.exports.postData = async (auth) => {
+  const api = new API({
+    credentials: auth,
+    url: 'https://ima-assp.org/api/analytics/dataValueSet.json',
+  });
 
-	const api = new API({
-		credentials: auth,
-		url: `https://ima-assp.org/api/analytics/dataValueSet.json`
-	});
-	let source;
-	const query = 'dimension=dx:DQiMxAlXTOe&dimension=pe:LAST_3_MONTHS&dimension=qRZwzI8PYTJ:XZqSZpJycKJ&dimension=ou:LEVEL-5;s7ZjqzKnWsJ&displayProperty=NAME';
-	
-	const url2 = 'https://ima-assp.org/api/organisationUnits';
-	const query2 = 'fields=id,name,dataSets[id,name]&filter=dataSets.id:in:[zdGNLhp4xAB,pJxcWVobpl2]&paging=false';
-	// download the Data                                                                                                                                                                                       
-	api.analytics({
-			query
-		})
-		.then(_source => {
-			source = _source;
-			return api.analytics({
-				url: url2,
-				query: query2
-			});
-		}).then(source2 => {
+  const PERIOD = 'LAST_3_MONTHS';
 
-			const dataValues = source.dataValues;
+  const query = `dimension=dx:DQiMxAlXTOe&dimension=pe:${PERIOD}&dimension=qRZwzI8PYTJ:XZqSZpJycKJ&dimension=ou:LEVEL-5;s7ZjqzKnWsJ&displayProperty=NAME`'
 
-			const dataMap = {};
-			var periods = [];
+  const orgUnitURL = 'https://ima-assp.org/api/organisationUnits';
+  const orgUnitQuery = 'fields=id,name,dataSets[id,name]&filter=dataSets.id:in:[zdGNLhp4xAB,pJxcWVobpl2]&paging=false';
 
-			//donnees apres elimination de doublons par period et unite d'orgabisation
-			var lastData = [];
+  try {
+    const [{ dataValues }, { organisationUnits }] = await Promise.all([
+      api.analytics({ query }),
+      api.analytics({ url: orgUnitURL, query: orgUnitQuery }),
+    ]);
 
-			// regroupons les donnees par period
-			dataValues.forEach(ligne => {
-				if (!dataMap[ligne.period]) {
-					dataMap[ligne.period] = [];
-					periods.push(ligne.period);
-				}
-				dataMap[ligne.period].push(ligne);
-			});
+    // regroupons les donnees par period
+    const dataMap = _.groupBy(dataValues, 'period');
 
+    // only select the lines with value greater than 0.
+    _.map(dataMap, values => values.filter(row => row.value > 0));
 
-			// detectons les elements à ecarter apres regroupement par period
-			periods.forEach(period => {
-				var orgUnits = {};
-				var datasPeriod = dataMap[period]; // les donnees pour une periode
+    const datasetUUID = ['zdGNLhp4xAB', 'pJxcWVobpl2'];
+    const datasetMap = {};
 
-				datasPeriod.forEach(dataPeriod => {
-
-					if (orgUnits[dataPeriod.orgUnit]) {
-						dataPeriod.Aecarter = true; // trouvE
-					} else {
-						orgUnits[dataPeriod.orgUnit] = true;
-					}
-
-				});
-
-				lastData.push(datasPeriod.filter(row => {
-					return !row.Aecarter;
-				}));
-
-			});
-
-			//  lastdata contient des tableaus car les donnees etaient regrouper en period
-			// lastdata = [[{}, {}], [{}, {}]]
-			// on le rend sous une forme simple d'un tableau d'objets
-			// lastdata = [{}, {}]
-			var lastDatatemp = [];
-			lastData.forEach(row => {
-				row.forEach(ligne => {
-					lastDatatemp.push(ligne);
-				});
-			});
-
-			lastData = lastDatatemp;
-
-			const datasetUUID = ['zdGNLhp4xAB', 'pJxcWVobpl2']
-			const organisationUnits = source2.organisationUnits;
-			datasetMap = {};
-
-			organisationUnits.forEach(orgUnit => {
-				const datasets = orgUnit.dataSets;
-				datasets.forEach(dataset => {
-					if (datasetUUID.includes(dataset.id)) {
-						datasetMap[orgUnit.id] = dataset.id;
-					}
-				})
-
-			})
-
-
-			const result = {
-				completeDataSetRegistrations: []
-			};
-
-			lastData.forEach(ligne => {
-
-				result.completeDataSetRegistrations.push({
-					"period": ligne.period,
-					"dataSet": datasetMap[ligne.orgUnit],
-					"organisationUnit": ligne.orgUnit,
-					"attributeOptionCombo": "c6PwdArn3fZ",
-					"date": ligne.created,
-					"storedBy": "IMA " + ligne.created
-				});
-			});
-			// console.log(result);
-
-			return api.postData({
-				data: result,
-				url: 'https://ima-assp.org/api/completeDataSetRegistrations'
-			});
-		})
-		.then(() => {
-      mailer.sendMail('success!!! Import Completness for FOSA', 'Import Completness for FOSA');
-    }).catch(err => {
-      mailer.sendMail('Fail!!! Import Completness for FOSA', 'Fail!!! Import Completness for FOSA' + JSON.stringify(err));
+    // maps org units to datasets
+    organisationUnits.forEach((orgUnit) => {
+      const datasets = orgUnit.dataSets;
+      datasets.forEach((dataset) => {
+        if (datasetUUID.includes(dataset.id)) {
+          datasetMap[orgUnit.id] = dataset.id;
+        }
+      });
     });
 
+    fs.writeFileSync('organisationUnits.json', JSON.stringify(organisationUnits), 'utf8');
+
+    const dataSet = 'pMbC0FJPkcm';
+
+    const completedDatasetAPI = new API({
+      credentials: auth,
+      url: 'https://snisrdc.com/api/completeDataSetRegistrations.json',
+    });
+
+    const requests = _.flatMap(dataMap, (values, period) => {
+      const { startDate, endDate } = computePeriodDates(period);
+
+      const orgUnit = _.map(values, row => row.orgUnit);
+
+      // create chunks of 35 org units a piece
+      const chunks = _.chunk(orgUnit, 35);
+
+      const promises = chunks.map((chunk) => {
+        const queryString = qs.stringify({
+          dataSet, startDate, endDate, orgUnit: chunk,
+        });
+
+        return completedDatasetAPI.analytics({ query: queryString });
+      });
+
+      return promises;
+    });
+
+    const promises = await Promise.all(requests);
+
+    const completed = _
+      .flatMap(promises, ds => ds.completeDataSetRegistrations);
+
+    const completeDataSetRegistrations = completed.map(ligne => Object.assign({}, ligne, {
+      dataSet: datasetMap[ligne.organisationUnit],
+      attributeOptionCombo: 'c6PwdArn3fZ',
+    }));
+
+    await api.postData({
+      data: { completeDataSetRegistrations },
+      url: 'https://ima-assp.org/api/completeDataSetRegistrations',
+    });
+
+    await mailer.sendMail(
+      'success!!! Import Completness for FOSA',
+      'Import Completness for FOSA',
+    );
+  } catch (err) {
+    console.error(err);
+    await mailer.sendMail(
+      `Fail!!! Import Completness for FOSA${JSON.stringify(err)}`,
+      'Fail!!! Import Completness for FOSA',
+    );
+  }
+
+  console.log('over it.');
+};
+
+function computePeriodDates(period) {
+  const justYear = period.substr(0, 4);
+  const justMonth = parseInt(period.substr(4, 6), 10);
+
+  const date = new Date(justYear, justMonth - 1, 1);
+  const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+  const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
+  let getMois;
+  if ((`${lastDay.getMonth()}`).length < 2) {
+    getMois = `0${(lastDay.getMonth() + 1).toString()}`;
+  } else {
+    getMois = lastDay.getMonth() + 1;
+  }
+
+  const startDate = `${firstDay.getFullYear()}-${getMois}-0${firstDay.getDate()}`;
+  const endDate = `${lastDay.getFullYear()}-${getMois}-${lastDay.getDate()}`;
+
+  return { startDate, endDate };
 }

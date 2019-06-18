@@ -17,33 +17,33 @@ const credential = require('./credentials.json');
 //Schedule execution
 var rule = new schedule.RecurrenceRule();
 // rule.dayOfWeek = [0, new schedule.Range(4, 6)];
-rule.hour = 2;
-rule.minute = 0;
+rule.hour = 14;
+rule.minute = 19;
 
 console.log('Starting Script');
 
 // Using function
-var j = schedule.scheduleJob(rule, function () {
-  console.log('Scheduling jobs');
-  ExecuteAndCatchErrors();
+var j = schedule.scheduleJob(rule, function() {
+    console.log('Scheduling jobs');
+    ExecuteAndCatchErrors();
 });
 
 
 function ExecuteAndCatchErrors() {
-  try {
-    const auth = credential.DHIS2;
-    completude_fosa.postData(auth);
-    completude_pcima.postData(auth);
-    completude_cs.postData(auth);
-    completude_hgr.postData(auth);
-    completude_survepi.postData(auth);
-    amoxycilline_min.postData(auth);
-    exhaustivite_snis.postData(auth);
-    exhaustivite_med.postData(auth);
-    codesa.postData(auth);
-    exhaustivite_nut.postData(auth);
-  } catch (error) {
-    console.log('global error');
-    console.log(error);
-  }
+    try {
+        const auth = credential.DHIS2;
+        completude_fosa.postData(auth);
+        //completude_pcima.postData(auth);
+        //completude_cs.postData(auth);
+        //completude_hgr.postData(auth);
+        //completude_survepi.postData(auth);
+        //amoxycilline_min.postData(auth);
+        //exhaustivite_snis.postData(auth);
+        //  exhaustivite_med.postData(auth);
+        //  codesa.postData(auth);
+        //  exhaustivite_nut.postData(auth);
+    } catch (error) {
+        console.log('global error');
+        console.log(error);
+    }
 }
