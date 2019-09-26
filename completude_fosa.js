@@ -10,7 +10,8 @@ module.exports.postData = async (auth) => {
     url: 'https://ima-assp.org/api/analytics/dataValueSet.json',
   });
 
-  const PERIOD = 'LAST_3_MONTHS';
+
+  const PERIOD = 'LAST_MONTH';
   const query = `dimension=dx:DQiMxAlXTOe&dimension=pe:${PERIOD}&dimension=qRZwzI8PYTJ:XZqSZpJycKJ&dimension=ou:LEVEL-5;s7ZjqzKnWsJ&displayProperty=NAME`;
 
   const orgUnitURL = 'https://ima-assp.org/api/organisationUnits';
@@ -89,7 +90,6 @@ module.exports.postData = async (auth) => {
       'Import Completness for FOSA',
     );
   } catch (err) {
-    console.error(err);
     await mailer.sendMail(
       `Fail!!! Import Completness for FOSA${JSON.stringify(err)}`,
       'Fail!!! Import Completness for FOSA',
