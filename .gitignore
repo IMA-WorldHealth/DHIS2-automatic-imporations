@@ -18,4 +18,4 @@ yarn-error.log
 nbproject/*
 
 #ignore credential files
-./credentials/
+credentials/*
