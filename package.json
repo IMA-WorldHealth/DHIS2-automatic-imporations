@@ -9,7 +9,7 @@
     "nodemailer": "^4.7.0",
     "q": "^1.5.1",
     "request": "^2.88.0",
-    "request-promise-native": "^1.0.7"
+    "request-promise-native": "^1.0.8"
   },
   "devDependencies": {
     "eslint": "^5.16.0",
