@@ -1,6 +1,7 @@
 const API = require('./lib/dhis2-api');
 const mailer = require('./mailer');
-// var fs = require('fs');
+const _ = require('lodash');
+const fs = require('fs');
 
 module.exports.postData = (auth) => {
   const api = new API({
@@ -34,38 +35,46 @@ module.exports.postData = (auth) => {
         mapping[item] = dataElementExh[index];
       });
 
-      const result = {
+      let resultPost = {
         dataValues: [],
       };
 
+      // groupons par unite d'organisatoion
+      const orgUnitData = _.groupBy(dataValues, 'orgUnit'); // return un {};
+      const orgUnits = Object.keys(orgUnitData);
 
-      // console.log('mapping : ', mapping);
-      dataValues.forEach((source) => {
-        // console.log('source element : ', source);
-        result.dataValues.push({
-          dataElement: mapping[source.dataElement],
-          period: source.period,
-          orgUnit: source.orgUnit,
-          value: 1,
-          storedBy: `IMA ${source.created}`,
-          created: source.created,
+     
+      for(let i = 0; i < orgUnits.length; i++){
+        let orgU = orgUnits[i];
+        const periodData = _.groupBy(orgUnitData[orgU], 'period');
+        
+        console.log();
+        let nbr = 0;
+        let _created = '';
+       Object.keys(periodData).forEach(period => {
+        _created = periodData[period][0].created;
+          nbr += periodData[period].length;
         });
-      });
-      // console.log(result);
 
-      // fs.writeFileSync('1data.json', JSON.stringify(result))
-      /*
-                        fs.writeFile('mynewfile3.txt', result, function(err) {
-                            if (err) throw err;
-                            console.log('Saved!');
-                        });
-            */
+        const _period = Object.keys(periodData)[0];
+       
+        resultPost.dataValues.push({
+          dataElement:'HpTkis3ZI00',
+         period: _period,
+          orgUnit: orgU,
+          value: nbr,
+          storedBy: `IMA ${ _created}`,
+          created: _created,
+        });
+      }
+      fs.writeFileSync('./exhaustivite.json', JSON.stringify(resultPost));
 
+      //console.log(resultPost);
+      
       return api.postData({
-        data: result,
-        // url: 'https://ima-assp.org/api/dataValueSets?importStrategy=CREATE'
-        url: 'https://ima-assp.org/api/dataValueSets?skipAudit=true',
-        // url: 'https://dev.ima-assp.org/api/dataValueSets?skipAudit=true',
+        data: resultPost,
+        //url: 'https://ima-assp.org/api/dataValueSets?skipAudit=true',
+         url: 'https://dev.ima-assp.org/api/dataValueSets?skipAudit=true',
       });
     })
 
