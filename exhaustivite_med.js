@@ -10,30 +10,28 @@ async function postData(auth) {
 
   const PERIOD = 'LAST_3_MONTHS';
   // const PERIOD = '201912';
-  const query = `dimension=dx:WgZr7FrDfVn;DQiMxAlXTOe;kGmdIbd3mbn;zcH4sipFcUr;cTLKwfG8pSv;xmbsTpMq7wx;V7bWComPcDJ;P9o3bL76s2r;eCYnE89bKmD;PFCz0A2SBtd;w8zw7gMZQvu;TkAGe7FvxzX&dimension=pe:${PERIOD}&dimension=ou:OU_GROUP-yE7cy94lS87;OU_GROUP-r0kbOtny4Fr;s7ZjqzKnWsJ&displayProperty=NAME`;
-
+  const query = `dimension=dx:tnhoicouMhU;s5I1AID0L1Y;WxDdamQ6ufm;Cic7ENwcUAR;C2ptkd6Klw3&dimension=pe:${PERIOD}&dimension=ou:OU_GROUP-yE7cy94lS87;OU_GROUP-r0kbOtny4Fr;s7ZjqzKnWsJ&displayProperty=NAME`;
   // download the Data
   const source = await api.analytics({ query });
   const { dataValues } = source;
 
   const db = new Sqlite();
   await db.connect();
-  await db.exec('DROP TABLE IF EXISTS  exaustivity_fosa');
+  await db.exec('DROP TABLE IF EXISTS  exaustivity_med');
   await db.exec(`
-    CREATE TABLE exaustivity_fosa (
+    CREATE TABLE exaustivity_med (
       data_element VARCHAR(50),
       period VARCHAR(100),
       org_unit VARCHAR(20),
       value DECIMAL(19, 4),
       created DATE
     );`);
+
   let insertSQL = `
-    INSERT INTO exaustivity_fosa(data_element, period, org_unit, value, created)
+    INSERT INTO exaustivity_med(data_element, period, org_unit, value, created)
     VALUES  `;
 
-  // Dataelement exhaustivite fosa
-
-  const dataElementFosa = 'HpTkis3ZI00';
+  const dataElementFosa = 'lrqdpRCG5vn';
 
   dataValues.forEach((row, index) => {
     insertSQL += `("${dataElementFosa}", "${row.period}", "${row.orgUnit}", ${row.value}, "${row.created}")`;
@@ -47,22 +45,21 @@ async function postData(auth) {
           data_element as dataElement, COUNT(period)as value,
           period, org_unit as orgUnit, 
           'IMA ' || created as storedBy,created
-        FROM exaustivity_fosa
+        FROM exaustivity_med
         GROUP BY period, org_unit
         `, {});
 
-  // fs.writeFileSync('./exhaustivite.json', JSON.stringify(resultPost));
   // free up space in the disk
-  await db.exec('DELETE FROM exaustivity_fosa WHERE 1');
+  await db.exec('DELETE FROM exaustivity_med WHERE 1');
 
   api.postData({
     data: resultPost,
     url: 'https://ima-assp.org/api/dataValueSets?skipAudit=true',
     // url: 'https://dev.ima-assp.org/api/dataValueSets?skipAudit=true',
   }).then(() => {
-    mailer.sendMail('success!!! Import Exhaustivity by FOSA', 'Import Exhaustivity by FOSA');
+    mailer.sendMail('success!!! Import Exhaustivity by Med', 'Import Exhaustivity by Med');
   }).catch((err) => {
-    mailer.sendMail(`Fail!!! Import Exhaustivity by FOSA${JSON.stringify(err)}`, 'Fail!!! Import Exhaustivity by FOSA');
+    mailer.sendMail(`Fail!!! Import Exhaustivity by Med ${JSON.stringify(err)}`, 'Fail!!! Import Exhaustivity by Med');
   });
 }
 
