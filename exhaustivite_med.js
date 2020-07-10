@@ -1,66 +1,59 @@
-const mailer = require('./mailer');
+const fs = require('fs');
 const API = require('./lib/dhis2-api');
-const Sqlite = require('./lib/sqlite');
+const mailer = require('./mailer');
 
-async function postData(auth) {
+module.exports.postData = (auth) => {
   const api = new API({
     credentials: auth,
     url: 'https://ima-assp.org/api/analytics/dataValueSet.json',
   });
 
-  const PERIOD = 'LAST_3_MONTHS';
-  // const PERIOD = '201912';
-  const query = `dimension=dx:tnhoicouMhU;s5I1AID0L1Y;WxDdamQ6ufm;Cic7ENwcUAR;C2ptkd6Klw3&dimension=pe:${PERIOD}&dimension=ou:OU_GROUP-yE7cy94lS87;OU_GROUP-r0kbOtny4Fr;s7ZjqzKnWsJ&displayProperty=NAME`;
+  const query = 'dimension=dx:t2O2Sf4Kngw;V7bWComPcDJ;P9o3bL76s2r;PFCz0A2SBtd;w8zw7gMZQvu&dimension=pe:LAST_3_MONTHS&dimension=ou:OU_GROUP-yE7cy94lS87;OU_GROUP-r0kbOtny4Fr;s7ZjqzKnWsJ&displayProperty=NAME';
   // download the Data
-  const source = await api.analytics({ query });
-  const { dataValues } = source;
+  api.analytics({
+    query,
+  })
+    .then((source) => {
+      const { dataValues } = source;
+      // const dataValues = request1.dataValues;
 
-  const db = new Sqlite();
-  await db.connect();
-  await db.exec('DROP TABLE IF EXISTS  exaustivity_med');
-  await db.exec(`
-    CREATE TABLE exaustivity_med (
-      data_element VARCHAR(50),
-      period VARCHAR(100),
-      org_unit VARCHAR(20),
-      value DECIMAL(19, 4),
-      created DATE
-    );`);
+      const dataElementval = ['t2O2Sf4Kngw', 'V7bWComPcDJ', 'P9o3bL76s2r', 'PFCz0A2SBtd', 'w8zw7gMZQvu'];
+      const dataElementExh = ['zNLo4MDcnyI', 'pAWUuUgO5H0', 'HRQ10ivsurn', 'XNVeTlQHhBO', 'cVmp8NMP04Z'];
 
-  let insertSQL = `
-    INSERT INTO exaustivity_med(data_element, period, org_unit, value, created)
-    VALUES  `;
+      // mapping
+      const mapping = {};
+      dataElementval.forEach((item, index) => {
+        mapping[item] = dataElementExh[index];
+      });
 
-  const dataElementFosa = 'lrqdpRCG5vn';
+      const result = {
+        dataValues: [],
+      };
 
-  dataValues.forEach((row, index) => {
-    insertSQL += `("${dataElementFosa}", "${row.period}", "${row.orgUnit}", ${row.value}, "${row.created}")`;
-    insertSQL += (index === dataValues.length - 1) ? ';' : ',';
-  });
+      // console.log(mapping);
+      // eslint-disable-next-line no-shadow
+      dataValues.forEach((source) => {
+        result.dataValues.push({
+          dataElement: mapping[`${source.dataElement}`],
+          period: source.period,
+          orgUnit: source.orgUnit,
+          value: 1,
+          storedBy: `IMA ${source.created}`,
+          created: source.created,
+        });
+      });
 
-  await db.exec(insertSQL);
+      fs.writeFileSync('./exhaustivitemed.json', JSON.stringify(result));
 
-  const resultPost = await db.select(`
-        SELECT 
-          data_element as dataElement, COUNT(period)as value,
-          period, org_unit as orgUnit, 
-          'IMA ' || created as storedBy,created
-        FROM exaustivity_med
-        GROUP BY period, org_unit
-        `, {});
-
-  // free up space in the disk
-  await db.exec('DELETE FROM exaustivity_med WHERE 1');
-
-  api.postData({
-    data: resultPost,
-    url: 'https://ima-assp.org/api/dataValueSets?skipAudit=true',
-    // url: 'https://dev.ima-assp.org/api/dataValueSets?skipAudit=true',
-  }).then(() => {
-    mailer.sendMail('success!!! Import Exhaustivity by Med', 'Import Exhaustivity by Med');
-  }).catch((err) => {
-    mailer.sendMail(`Fail!!! Import Exhaustivity by Med ${JSON.stringify(err)}`, 'Fail!!! Import Exhaustivity by Med');
-  });
-}
-
-module.exports.postData = postData;
+      return api.postData({
+        data: result,
+        url: 'https://ima-assp.org/api/dataValueSets?skipAudit=true',
+        // url: 'https://dev.ima-assp.org/api/dataValueSets?skipAudit=true'
+      });
+    })
+    .then((response) => {
+      mailer.sendMail(JSON.stringify(response), 'Import Exhaustivity Med');
+    }).catch((err) => {
+      mailer.sendMail('Fail!!! Import Exhaustivity Med', `Fail!!! Import Exhaustivity Med${JSON.stringify(err)}`);
+    });
+};

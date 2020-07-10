@@ -9,8 +9,7 @@ async function postData(auth) {
   });
 
   const PERIOD = 'LAST_3_MONTHS';
-  // const PERIOD = '201912';
-  const query = `dimension=dx:WgZr7FrDfVn;DQiMxAlXTOe;kGmdIbd3mbn;zcH4sipFcUr;cTLKwfG8pSv;xmbsTpMq7wx;V7bWComPcDJ;P9o3bL76s2r;eCYnE89bKmD;PFCz0A2SBtd;w8zw7gMZQvu;TkAGe7FvxzX&dimension=pe:${PERIOD}&dimension=ou:OU_GROUP-yE7cy94lS87;OU_GROUP-r0kbOtny4Fr;s7ZjqzKnWsJ&displayProperty=NAME`;
+  const query = `dimension=dx:WgZr7FrDfVn;DQiMxAlXTOe;kGmdIbd3mbn;zcH4sipFcUr;cTLKwfG8pSv;eCYnE89bKmD;TkAGe7FvxzX&dimension=pe:${PERIOD}&dimension=ou:OU_GROUP-yE7cy94lS87;OU_GROUP-r0kbOtny4Fr;s7ZjqzKnWsJ&displayProperty=NAME`;
 
   // download the Data
   const source = await api.analytics({ query });
@@ -50,10 +49,6 @@ async function postData(auth) {
         FROM exaustivity_fosa
         GROUP BY period, org_unit
         `, {});
-
-  // fs.writeFileSync('./exhaustivite.json', JSON.stringify(resultPost));
-  // free up space in the disk
-  await db.exec('DELETE FROM exaustivity_fosa WHERE 1');
 
   api.postData({
     data: resultPost,
