@@ -1,6 +1,7 @@
 const mailer = require('./mailer');
 const API = require('./lib/dhis2-api');
 const Sqlite = require('./lib/sqlite');
+// const fs = require('fs');
 
 async function postData(auth) {
   const api = new API({
@@ -43,15 +44,22 @@ async function postData(auth) {
 
   const resultPost = await db.select(`
         SELECT 
-          data_element as dataElement, COUNT(period)as value,
+          data_element as dataElement,
+          COUNT(period)as value,
           period, org_unit as orgUnit, 
           'IMA ' || created as storedBy,created
         FROM exaustivity_fosa
         GROUP BY period, org_unit
         `, {});
-
+  /*
+  fs.writeFileSync('file.json', JSON.stringify({
+    dataValues: resultPost,
+  }));
+*/
   api.postData({
-    data: resultPost,
+    data: {
+      dataValues: resultPost,
+    },
     url: 'https://ima-assp.org/api/dataValueSets?skipAudit=true',
     // url: 'https://dev.ima-assp.org/api/dataValueSets?skipAudit=true',
   }).then(() => {

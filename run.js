@@ -1,5 +1,5 @@
 // calling file exten
-const completudeFosa = require('./exhaustivite_med');
+const completudeFosa = require('./exhaustivite_fosa');
 
 const credential = require('./credentials/credentials.json');
 
