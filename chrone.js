@@ -9,9 +9,9 @@ const completude_hgr = require('./completude_hgr');
 const completude_survepi = require('./completude_survepi');
 const exhaustivite_nut = require('./exhaustivite_nut');
 const exhaustivite_fosa = require('./exhaustivite_fosa');
+const exhaustivite_med = require('./exhaustivite_med');
 const codesa = require('./codesa');
 const credential = require('./credentials/credentials.json');
-
 
 // Schedule execution
 const rule = new schedule.RecurrenceRule();
@@ -20,11 +20,6 @@ rule.hour = 0;
 rule.minute = 0;
 
 console.log('Starting Script');
-// Using function
-schedule.scheduleJob(rule, () => {
-  console.log('Scheduling jobs');
-  ExecuteAndCatchErrors();
-});
 
 function ExecuteAndCatchErrors() {
   try {
@@ -36,6 +31,7 @@ function ExecuteAndCatchErrors() {
     completude_survepi.postData(auth);
     amoxycilline_min.postData(auth);
     codesa.postData(auth);
+    exhaustivite_med.postData(auth);
     exhaustivite_nut.postData(auth);
     exhaustivite_fosa.postData(auth);
   } catch (error) {
@@ -43,3 +39,9 @@ function ExecuteAndCatchErrors() {
     console.log(error);
   }
 }
+
+// Using function
+schedule.scheduleJob(rule, () => {
+  console.log('Scheduling jobs');
+  ExecuteAndCatchErrors();
+});
