@@ -10,7 +10,6 @@ module.exports.postData = async (auth) => {
     url: 'https://ima-assp.org/api/analytics/dataValueSet.json',
   });
 
-
   const PERIOD = 'LAST_MONTH';
   const query = `dimension=dx:DQiMxAlXTOe&dimension=pe:${PERIOD}&dimension=qRZwzI8PYTJ:XZqSZpJycKJ&dimension=ou:LEVEL-5;s7ZjqzKnWsJ&displayProperty=NAME`;
 
@@ -27,7 +26,7 @@ module.exports.postData = async (auth) => {
     const dataMap = _.groupBy(dataValues, 'period');
 
     // only select the lines with value greater than 0.
-    _.map(dataMap, values => values.filter(row => row.value > 0));
+    _.map(dataMap, (values) => values.filter((row) => row.value > 0));
 
     const datasetUUID = ['zdGNLhp4xAB', 'pJxcWVobpl2'];
     const datasetMap = {};
@@ -54,7 +53,7 @@ module.exports.postData = async (auth) => {
     const requests = _.flatMap(dataMap, (values, period) => {
       const { startDate, endDate } = computePeriodDates(period);
 
-      const orgUnit = _.map(values, row => row.orgUnit);
+      const orgUnit = _.map(values, (row) => row.orgUnit);
 
       // create chunks of 35 org units a piece
       const chunks = _.chunk(orgUnit, 35);
@@ -73,9 +72,10 @@ module.exports.postData = async (auth) => {
     const promises = await Promise.all(requests);
 
     const completed = _
-      .flatMap(promises, ds => ds.completeDataSetRegistrations);
+      .flatMap(promises, (ds) => ds.completeDataSetRegistrations);
 
-    const completeDataSetRegistrations = completed.map(ligne => Object.assign({}, ligne, {
+    const completeDataSetRegistrations = completed.map((ligne) => ({
+      ...ligne,
       dataSet: datasetMap[ligne.organisationUnit],
       attributeOptionCombo: 'c6PwdArn3fZ',
     }));

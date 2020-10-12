@@ -10,10 +10,10 @@ async function postData(auth) {
   });
 
   const PERIOD = 'LAST_3_MONTHS';
-  //const PERIOD = '202001;202002;202003';
-  //const query = `dimension=dx:kSfzX7CI9Pa.c6PwdArn3fZ;fxp6usJqASn.c6PwdArn3fZ;loz95d1Bj2X.c6PwdArn3fZ;ry4CAnw2PBH.nrcLHEDh2Rg;ry4CAnw2PBH.EsE3Jr84doi;APuTx7KceW4.nrcLHEDh2Rg;APuTx7KceW4.EsE3Jr84doi&dimension=pe:${PERIOD}&dimension=ou:LEVEL-4;s7ZjqzKnWsJ&displayProperty=NAME`;
+  // const PERIOD = '202001;202002;202003';
+  // const query = `dimension=dx:kSfzX7CI9Pa.c6PwdArn3fZ;fxp6usJqASn.c6PwdArn3fZ;loz95d1Bj2X.c6PwdArn3fZ;ry4CAnw2PBH.nrcLHEDh2Rg;ry4CAnw2PBH.EsE3Jr84doi;APuTx7KceW4.nrcLHEDh2Rg;APuTx7KceW4.EsE3Jr84doi&dimension=pe:${PERIOD}&dimension=ou:LEVEL-4;s7ZjqzKnWsJ&displayProperty=NAME`;
   const query = `dimension=dx:rxmxiaUadTA.bHW4SLyYQzK;wsCeuBQB7Zu.erc0DPwRTGs;rxmxiaUadTA.cFIDOqFqZYq;wsCeuBQB7Zu.bE54ow98bbh;rxmxiaUadTA.EX0kPmRBvTC;wsCeuBQB7Zu.pu4ZHu96A6j;rxmxiaUadTA.SXHhFJXfNik;wsCeuBQB7Zu.kNpThwmu07n&dimension=pe:${PERIOD}&dimension=ou:LEVEL-4;s7ZjqzKnWsJ&displayProperty=NAME`;
- 
+
   // download the Data
   const source = await api.analytics({ query });
   const { dataValues } = source;
@@ -32,11 +32,10 @@ async function postData(auth) {
   let insertSQL = `
     INSERT INTO exaustivity_nut(data_element, period, org_unit, value, created)
     VALUES  `;
-  
-    //Dataelement exhaustivite Nut
+
+  // Dataelement exhaustivite Nut
 
   const dataElementNut = 'Ga5e2gQ51B8';
-
 
   dataValues.forEach((row, index) => {
     insertSQL += `("${dataElementNut}", "${row.period}", "${row.orgUnit}", ${row.value}, "${row.created}")`;
@@ -67,6 +66,5 @@ async function postData(auth) {
     mailer.sendMail(`Fail!!! Import Exhaustivity Nutrition${JSON.stringify(err)}`, 'Fail!!! Import Exhaustivity Nutrition');
   });
 }
-
 
 module.exports.postData = postData;
