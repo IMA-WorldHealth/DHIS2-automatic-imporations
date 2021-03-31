@@ -10,7 +10,7 @@
     "q": "^1.5.1",
     "request": "^2.88.2",
     "request-promise-native": "^1.0.9",
-    "sqlite3": "^5.0.1"
+    "sqlite3": "^5.0.2"
   },
   "devDependencies": {
     "eslint": "^7.23.0",
