@@ -10,8 +10,8 @@ module.exports.postData = (auth) => {
     url: 'https://ima-assp.org/api/analytics/dataValueSet.json',
   });
 
-  const query = 'dimension=dx:kSZql3OdY28&dimension=pe:LAST_4_QUARTERS&dimension=ou:LEVEL-3;D15NtionqkH;I8CuQpdBQfP;uyuwe6bqphf;iu4Zj3Zq39m&displayProperty=NAME';
-  // const query = `dimension=dx:kSZql3OdY28&dimension=pe:LAST_QUARTER&dimension=ou:LEVEL-3;D15NtionqkH;I8CuQpdBQfP;uyuwe6bqphf;iu4Zj3Zq39m&displayProperty=NAME`;
+  const query = 'dimension=dx:kSZql3OdY28&dimension=pe:LAST_4_QUARTERS&dimension=ou:LEVEL-3;D15NtionqkH;I8CuQpdBQfP;iu4Zj3Zq39m&displayProperty=NAME';
+  // const query = `dimension=dx:kSZql3OdY28&dimension=pe:LAST_QUARTER&dimension=ou:LEVEL-3;D15NtionqkH;I8CuQpdBQfP;iu4Zj3Zq39m&displayProperty=NAME`;
   // download the Data
   api.analytics({
     query,
@@ -46,8 +46,8 @@ module.exports.postData = (auth) => {
         }
       });
 
-      //console.log(`nombre : ${donne}`);
-      //fs.writeFileSync('./score_80.json', JSON.stringify(result));
+      console.log(`nombre : ${donne}`);
+      fs.writeFileSync('./score_80.json', JSON.stringify(result));
       
             return api.postData({
                 data: result,
@@ -58,6 +58,6 @@ module.exports.postData = (auth) => {
     .then(() => {
       mailer.sendMail('success!!! Import Score 80', 'Import Score 80');
     }).catch((err) => {
-      mailer.sendMail('Fail!!! Import Score 80', `Fail!!! Import Score 80${JSON.stringify(err)}`);
+      mailer.sendMail(`Fail!!! Import Score 80${JSON.stringify(err)}`, 'Fail!!! Import Score 80');
     });
 };
