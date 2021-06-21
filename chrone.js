@@ -33,7 +33,7 @@ function ExecuteAndCatchErrors() {
     exhaustivite_nut.postData(auth);
     exhaustivite_CS_HGR.postData(auth);
     exhaustivite_all.postData(auth);
-score_80.postData(auth);
+    score_80.postData(auth);
   } catch (error) {
     console.log('global error occurred');
     console.log(error);
