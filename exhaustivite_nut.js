@@ -66,4 +66,3 @@ async function postData(auth) {
     mailer.sendMail(`Fail!!! Import Exhaustivity Nutrition${JSON.stringify(err)}`, 'Fail!!! Import Exhaustivity Nutrition');
   });
 }
-
