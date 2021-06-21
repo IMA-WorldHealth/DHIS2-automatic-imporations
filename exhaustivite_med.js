@@ -1,5 +1,6 @@
 const API = require('./lib/dhis2-api');
 const mailer = require('./mailer');
+const fs = require('fs');
 
 module.exports.postData = (auth) => {
 
@@ -8,7 +9,8 @@ module.exports.postData = (auth) => {
         url: `https://ima-assp.org/api/analytics/dataValueSet.json`
     });
 
-    const query = `dimension=dx:kSfzX7CI9Pa.c6PwdArn3fZ;fxp6usJqASn.c6PwdArn3fZ;loz95d1Bj2X.c6PwdArn3fZ;ry4CAnw2PBH.nrcLHEDh2Rg;ry4CAnw2PBH.EsE3Jr84doi;APuTx7KceW4.nrcLHEDh2Rg;APuTx7KceW4.EsE3Jr84doi&dimension=pe:LAST_3_MONTHS&dimension=ou:LEVEL-4;s7ZjqzKnWsJ&displayProperty=NAME`;
+    //const query = `dimension=dx:t2O2Sf4Kngw;V7bWComPcDJ;P9o3bL76s2r;PFCz0A2SBtd;w8zw7gMZQvu&dimension=pe:202001;202002;202003&dimension=ou:OU_GROUP-yE7cy94lS87;OU_GROUP-r0kbOtny4Fr;s7ZjqzKnWsJ&displayProperty=NAME`;
+    const query = `dimension=dx:t2O2Sf4Kngw;V7bWComPcDJ;P9o3bL76s2r;PFCz0A2SBtd;w8zw7gMZQvu&dimension=pe:LAST_3_MONTHS&dimension=ou:OU_GROUP-yE7cy94lS87;OU_GROUP-r0kbOtny4Fr;s7ZjqzKnWsJ&displayProperty=NAME`;
     // download the Data                                                                                                                                                                                       
     api.analytics({
             query
@@ -17,8 +19,8 @@ module.exports.postData = (auth) => {
             const dataValues = source.dataValues;
             //const dataValues = request1.dataValues;
 
-            const dataElementval = ['kSfzX7CI9Pa.c6PwdArn3fZ', 'fxp6usJqASn.c6PwdArn3fZ', 'loz95d1Bj2X.c6PwdArn3fZ', 'APuTx7KceW4.EsE3Jr84doi', 'APuTx7KceW4.nrcLHEDh2Rg', 'ry4CAnw2PBH.nrcLHEDh2Rg', 'ry4CAnw2PBH.EsE3Jr84doi']
-            const dataElementExh = ['S4Al4LKbq67', 'doelqqEfv77', 'CHebmX4wcDN', 'b5YkzZhIVyJ', 'I0Qb3NBsYig', 'h4LE0FUbvmF', 'TB4KL6qjNG0'];
+            const dataElementval = ['t2O2Sf4Kngw','V7bWComPcDJ','P9o3bL76s2r','PFCz0A2SBtd','w8zw7gMZQvu'];
+            const dataElementExh = ['zNLo4MDcnyI','pAWUuUgO5H0','HRQ10ivsurn','XNVeTlQHhBO','cVmp8NMP04Z'];
             datasetMap = {};
 
             // mapping
@@ -35,7 +37,7 @@ module.exports.postData = (auth) => {
             dataValues.forEach(source => {
 
                 result.dataValues.push({
-                    "dataElement": mapping[`${source.dataElement}.${source.categoryOptionCombo}`],
+                    "dataElement": mapping[`${source.dataElement}`],
                     "period": source.period,
                     "orgUnit": source.orgUnit,
                     "value": 1,
@@ -43,16 +45,19 @@ module.exports.postData = (auth) => {
                     "created": source.created
                 });
             });
+            
+            fs.writeFileSync('./exhaustivitemed.json', JSON.stringify(result));
+
             return api.postData({
                 data: result,
-                //url: 'https://ima-assp.org/api/dataValueSets?importStrategy=CREATE'
-                url: 'https://ima-assp.org/api/dataValueSets?skipAudit=true'
+                 url: 'https://ima-assp.org/api/dataValueSets?skipAudit=true'
+                //url: 'https://dev.ima-assp.org/api/dataValueSets?skipAudit=true'
             });
         })
         .then((response) => {
-            mailer.sendMail(JSON.stringify(response), 'Import Exhaustivity Nutrition');
+            mailer.sendMail(JSON.stringify(response), 'Import Exhaustivity Med');
         }).catch(err => {
-            mailer.sendMail('Fail!!! Import Exhaustivity Nutrition', 'Fail!!! Import Exhaustivity Nutrition' + JSON.stringify(err));
+            mailer.sendMail('Fail!!! Import Exhaustivity Med', 'Fail!!! Import Exhaustivity Med' + JSON.stringify(err));
         });
 
 }

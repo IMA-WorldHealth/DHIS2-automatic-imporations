@@ -8,8 +8,10 @@ const completude_cs = require('./completude_cs');
 const completude_hgr = require('./completude_hgr');
 const completude_survepi = require('./completude_survepi');
 const exhaustivite_nut = require('./exhaustivite_nut');
-const exhaustivite_fosa = require('./exhaustivite_fosa');
+const exhaustivite_CS_HGR = require('./exhaustivite_CS_HGR');
+const exhaustivite_all = require('./exhaustivite_all');
 const codesa = require('./codesa');
+const score_80 = require('./score_80');
 const credential = require('./credentials/credentials.json');
 
 
@@ -37,7 +39,9 @@ function ExecuteAndCatchErrors() {
     amoxycilline_min.postData(auth);
     codesa.postData(auth);
     exhaustivite_nut.postData(auth);
-    exhaustivite_fosa.postData(auth);
+    exhaustivite_CS_HGR.postData(auth);
+    exhaustivite_all.postData(auth);
+    score_80.postData(auth);
   } catch (error) {
     console.log('global error occurred');
     console.log(error);

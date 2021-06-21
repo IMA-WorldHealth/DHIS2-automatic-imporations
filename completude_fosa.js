@@ -3,15 +3,14 @@ const fs = require('fs');
 const qs = require('querystring');
 const API = require('./lib/dhis2-api');
 const mailer = require('./mailer');
-
 module.exports.postData = async (auth) => {
   const api = new API({
     credentials: auth,
     url: 'https://ima-assp.org/api/analytics/dataValueSet.json',
   });
 
-
   const PERIOD = 'LAST_MONTH';
+  //const PERIOD = '202007';
   const query = `dimension=dx:DQiMxAlXTOe&dimension=pe:${PERIOD}&dimension=qRZwzI8PYTJ:XZqSZpJycKJ&dimension=ou:LEVEL-5;s7ZjqzKnWsJ&displayProperty=NAME`;
 
   const orgUnitURL = 'https://ima-assp.org/api/organisationUnits';
@@ -27,7 +26,7 @@ module.exports.postData = async (auth) => {
     const dataMap = _.groupBy(dataValues, 'period');
 
     // only select the lines with value greater than 0.
-    _.map(dataMap, values => values.filter(row => row.value > 0));
+    _.map(dataMap, (values) => values.filter((row) => row.value > 0));
 
     const datasetUUID = ['zdGNLhp4xAB', 'pJxcWVobpl2'];
     const datasetMap = {};
@@ -54,7 +53,7 @@ module.exports.postData = async (auth) => {
     const requests = _.flatMap(dataMap, (values, period) => {
       const { startDate, endDate } = computePeriodDates(period);
 
-      const orgUnit = _.map(values, row => row.orgUnit);
+      const orgUnit = _.map(values, (row) => row.orgUnit);
 
       // create chunks of 35 org units a piece
       const chunks = _.chunk(orgUnit, 35);
@@ -73,13 +72,14 @@ module.exports.postData = async (auth) => {
     const promises = await Promise.all(requests);
 
     const completed = _
-      .flatMap(promises, ds => ds.completeDataSetRegistrations);
+      .flatMap(promises, (ds) => ds.completeDataSetRegistrations);
 
-    const completeDataSetRegistrations = completed.map(ligne => Object.assign({}, ligne, {
+    const completeDataSetRegistrations = completed.map((ligne) => ({
+      ...ligne,
       dataSet: datasetMap[ligne.organisationUnit],
       attributeOptionCombo: 'c6PwdArn3fZ',
     }));
-
+    fs.writeFileSync('./completude_fosa.json', JSON.stringify(completeDataSetRegistrations));
     await api.postData({
       data: { completeDataSetRegistrations },
       url: 'https://ima-assp.org/api/completeDataSetRegistrations',
@@ -106,7 +106,7 @@ function computePeriodDates(period) {
   const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
 
   let getMois;
-  if ((`${lastDay.getMonth()}`).length < 2) {
+  if ((`${lastDay.getMonth() + 1}`).length < 2) {
     getMois = `0${(lastDay.getMonth() + 1).toString()}`;
   } else {
     getMois = lastDay.getMonth() + 1;
