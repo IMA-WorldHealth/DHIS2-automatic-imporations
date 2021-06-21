@@ -1,7 +1,8 @@
-const fs = require('fs');
+
 const mailer = require('./mailer');
 const API = require('./lib/dhis2-api');
 const Sqlite = require('./lib/sqlite');
+// const fs = require('fs');
 
 async function postData(auth) {
   const api = new API({
@@ -10,8 +11,8 @@ async function postData(auth) {
   });
 
   const PERIOD = 'LAST_3_MONTHS';
-  //const PERIOD = '202001;202002;202003';
- const query = `dimension=dx:WgZr7FrDfVn;DQiMxAlXTOe;kGmdIbd3mbn;zcH4sipFcUr;cTLKwfG8pSv;eCYnE89bKmD;TkAGe7FvxzX&dimension=pe:${PERIOD}&dimension=ou:OU_GROUP-yE7cy94lS87;OU_GROUP-r0kbOtny4Fr;s7ZjqzKnWsJ&displayProperty=NAME`;
+
+  const query = `dimension=dx:WgZr7FrDfVn;DQiMxAlXTOe;kGmdIbd3mbn;zcH4sipFcUr;cTLKwfG8pSv;eCYnE89bKmD;TkAGe7FvxzX&dimension=pe:${PERIOD}&dimension=ou:OU_GROUP-yE7cy94lS87;OU_GROUP-r0kbOtny4Fr;s7ZjqzKnWsJ&displayProperty=NAME`;
 
   // download the Data
   const source = await api.analytics({ query });
@@ -31,41 +32,13 @@ async function postData(auth) {
   let insertSQL = `
     INSERT INTO exaustivity_fosa(data_element, period, org_unit, value, created)
     VALUES  `;
-  
-    //Dataelement exhaustivite fosa
+
+  // Dataelement exhaustivite fosa
 
   const dataElementFosa = 'HpTkis3ZI00';
-
 
   dataValues.forEach((row, index) => {
     insertSQL += `("${dataElementFosa}", "${row.period}", "${row.orgUnit}", ${row.value}, "${row.created}")`;
     insertSQL += (index === dataValues.length - 1) ? ';' : ',';
   });
-
-  await db.exec(insertSQL);
-
-  const resultPost = await db.select(`
-        SELECT 
-          data_element as dataElement, COUNT(period)as value,
-          period, org_unit as orgUnit, 
-          'IMA ' || created as storedBy,created
-        FROM exaustivity_fosa
-        GROUP BY period, org_unit
-        `, {});
-  fs.writeFileSync('./exhaustivite.json', JSON.stringify(resultPost));
-
-  api.postData({
-    data: {
-      dataValues: resultPost,
-    },
-    url: 'https://ima-assp.org/api/dataValueSets?skipAudit=true',
-    // url: 'https://dev.ima-assp.org/api/dataValueSets?skipAudit=true',
-  }).then(() => {
-    mailer.sendMail('success!!! Import Exhaustivity by FOSA', 'Import Exhaustivity by FOSA');
-  }).catch((err) => {
-    mailer.sendMail(`Fail!!! Import Exhaustivity by FOSA${JSON.stringify(err)}`, 'Fail!!! Import Exhaustivity by FOSA');
-  });
-}
-
-
 module.exports.postData = postData;

@@ -14,19 +14,11 @@ const codesa = require('./codesa');
 const score_80 = require('./score_80');
 const credential = require('./credentials/credentials.json');
 
-
 // Schedule execution
 const rule = new schedule.RecurrenceRule();
 // rule.dayOfWeek = [0, new schedule.Range(4, 6)];
 rule.hour = 0;
 rule.minute = 0;
-
-console.log('Starting Script');
-// Using function
-schedule.scheduleJob(rule, () => {
-  console.log('Scheduling jobs');
-  ExecuteAndCatchErrors();
-});
 
 function ExecuteAndCatchErrors() {
   try {
@@ -41,9 +33,16 @@ function ExecuteAndCatchErrors() {
     exhaustivite_nut.postData(auth);
     exhaustivite_CS_HGR.postData(auth);
     exhaustivite_all.postData(auth);
-    score_80.postData(auth);
+score_80.postData(auth);
   } catch (error) {
     console.log('global error occurred');
     console.log(error);
   }
 }
+
+console.log('Starting Script');
+// Using function
+schedule.scheduleJob(rule, () => {
+  console.log('Scheduling jobs');
+  ExecuteAndCatchErrors();
+});

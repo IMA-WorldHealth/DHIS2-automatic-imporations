@@ -1,4 +1,4 @@
-const API = require('./lib/dhis2-api');
+const fs = require('fs');
 const mailer = require('./mailer');
 const fs = require('fs');
 
