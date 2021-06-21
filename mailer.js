@@ -1,29 +1,29 @@
 const nodemailer = require('nodemailer');
-const credential = require('./credentials/credentials.json');
+const debug = require('debug')('dhis2-automatic-importations:mailer');
 
 exports.sendMail = sendMail;
 
-function sendMail(descrition, subject) {
+function sendMail(description, subject) {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: credential.GMAIL.user,
-      pass: credential.GMAIL.pass,
+      user: process.env.GMAIL_USER,
+      pass: process.env.GMAIL_PASSWORD,
     },
   });
 
   const mailOptions = {
-    from: credential.GMAIL.user,
-    to: credential.GMAIL.userTo,
+    from: process.env.GMAIL_USER,
+    to: process.env.GMAIL_USER_TO,
     subject,
-    text: descrition,
+    text: description,
   };
 
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
-      console.log(error);
+      debug(error);
     } else {
-      console.log(`Email sent: ${info.response}`);
+      debug(`Email sent: ${info.response}`);
     }
   });
 }

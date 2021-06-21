@@ -5,6 +5,7 @@
 .idea/*
 *~
 
+
 # ignore npm/node modules
 node_modules/
 npm-debug.log
@@ -19,3 +20,6 @@ nbproject/*
 
 #ignore credential files
 credentials/*
+.env
+
+.yarn/*

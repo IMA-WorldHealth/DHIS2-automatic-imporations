@@ -8,13 +8,13 @@ module.exports.postData = (auth) => {
   });
 
   const query = 'dimension=dx:CmgZSXVpyWR&dimension=pe:LAST_3_MONTHS&dimension=ou:LEVEL-4;s7ZjqzKnWsJ&displayProperty=NAME';
+
   // download the Data
   api.analytics({
     query,
   })
     .then((source) => {
       const { dataValues } = source;
-      // const dataValues = request1.dataValues;
 
       const dataElementFOSA = ['CmgZSXVpyWR'];
       const dataElementAS = ['rVr8pi2mP6S'];
@@ -40,7 +40,6 @@ module.exports.postData = (auth) => {
           created: source.created,
         });
       });
-      // console.log(result);
 
       return api.postData({
         data: result,
