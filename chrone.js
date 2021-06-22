@@ -21,7 +21,7 @@ rule.hour = 0;
 rule.minute = 0;
 
 function ExecuteAndCatchErrors() {
-  debug('Starting ExecuteAndCatchErrors()');
+  
   try {
     completude_fosa.postData(auth);
     completude_pcima.postData(auth);
