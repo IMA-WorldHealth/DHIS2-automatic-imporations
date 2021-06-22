@@ -1,4 +1,4 @@
-const fs = require('fs');
+const API = require('./lib/dhis2-api');
 const mailer = require('./mailer');
 const fs = require('fs');
 
@@ -46,7 +46,7 @@ module.exports.postData = (auth) => {
                 });
             });
             
-            fs.writeFileSync('./exhaustivitemed.json', JSON.stringify(result));
+            fs.writeFileSync('./exhaustiviteCS-HGR.json', JSON.stringify(result));
 
             return api.postData({
                 data: result,

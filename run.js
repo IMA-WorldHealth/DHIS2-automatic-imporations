@@ -1,7 +1,9 @@
 // calling file exten
-const completudeFosa = require('./exhaustivite_fosa');
+const exhaustivite_all = require('./exhaustivite_all');
+const exhaustivite_CS_HGR = require('./exhaustivite_CS_HGR');
 
 const credential = require('./credentials/credentials.json');
 
 const auth = credential.DHIS2;
-completudeFosa.postData(auth);
+exhaustivite_all.postData(auth);
+exhaustivite_CS_HGR.postData(auth);

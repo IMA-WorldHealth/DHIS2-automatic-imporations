@@ -45,7 +45,7 @@ module.exports.postData = (auth) => {
                 });
             });
             
-            fs.writeFileSync('./exhaustivitemed.json', JSON.stringify(result));
+            fs.writeFileSync('./exhaustiviteAll.json', JSON.stringify(result));
 
             return api.postData({
                 data: result,
