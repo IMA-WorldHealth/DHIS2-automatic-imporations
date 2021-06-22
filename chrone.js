@@ -8,7 +8,7 @@ const completude_cs = require('./completude_cs');
 const completude_hgr = require('./completude_hgr');
 const completude_survepi = require('./completude_survepi');
 const exhaustivite_nut = require('./exhaustivite_nut');
-const exhaustivite_fosa = require('./exhaustivite_fosa');
+//const exhaustivite_fosa = require('./exhaustivite_fosa');
 const exhaustivite_med = require('./exhaustivite_med');
 const codesa = require('./codesa');
 const score_80 = require('./score_80');
@@ -23,29 +23,26 @@ rule.minute = 0;
 function ExecuteAndCatchErrors() {
   debug('Starting ExecuteAndCatchErrors()');
   try {
-    //completude_fosa.postData(auth);
-    //completude_pcima.postData(auth);
-    //completude_cs.postData(auth);
-    //completude_hgr.postData(auth);
-    //completude_survepi.postData(auth);
-    //amoxycilline_min.postData(auth);
-    //codesa.postData(auth);
-    //exhaustivite_nut.postData(auth);
+    completude_fosa.postData(auth);
+    completude_pcima.postData(auth);
+    completude_cs.postData(auth);
+    completude_hgr.postData(auth);
+    completude_survepi.postData(auth);
+    amoxycilline_min.postData(auth);
+    codesa.postData(auth);
+    exhaustivite_nut.postData(auth);
     exhaustivite_CS_HGR.postData(auth);
     exhaustivite_all.postData(auth);
-    //score_80.postData(auth);
+    score_80.postData(auth);
   } catch (error) {
-    debug('A global error occurred.');
-    debug(error);
+    console.log('global error occurred');
+    console.log(error);
   }
 }
 
-debug('Starting script');
-debug(`Next run of rule at : ${rule.nextInvocationDate().toLocaleString()}`);
-
-
+console.log('Starting Script');
 // Using function
 schedule.scheduleJob(rule, () => {
-  debug('Starting jobs...');
+  console.log('Scheduling jobs');
   ExecuteAndCatchErrors();
 });
