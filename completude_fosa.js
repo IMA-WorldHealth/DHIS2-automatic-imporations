@@ -3,6 +3,7 @@ const fs = require('fs');
 const qs = require('querystring');
 const API = require('./lib/dhis2-api');
 const mailer = require('./mailer');
+
 module.exports.postData = async (auth) => {
   const api = new API({
     credentials: auth,
@@ -10,7 +11,7 @@ module.exports.postData = async (auth) => {
   });
 
   const PERIOD = 'LAST_MONTH';
-  //const PERIOD = '202007';
+  // const PERIOD = '202007';
   const query = `dimension=dx:DQiMxAlXTOe&dimension=pe:${PERIOD}&dimension=qRZwzI8PYTJ:XZqSZpJycKJ&dimension=ou:LEVEL-5;s7ZjqzKnWsJ&displayProperty=NAME`;
 
   const orgUnitURL = 'https://ima-assp.org/api/organisationUnits';

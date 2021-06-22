@@ -48,12 +48,11 @@ module.exports.postData = (auth) => {
 
       console.log(`nombre : ${donne}`);
       fs.writeFileSync('./score_80.json', JSON.stringify(result));
-      
-            return api.postData({
-                data: result,
-                url: 'https://ima-assp.org/api/dataValueSets?skipAudit=true'
-            })
 
+      return api.postData({
+        data: result,
+        url: 'https://ima-assp.org/api/dataValueSets?skipAudit=true',
+      });
     })
     .then(() => {
       mailer.sendMail('success!!! Import Score 80', 'Import Score 80');

@@ -1,6 +1,5 @@
 const API = require('./lib/dhis2-api');
 const mailer = require('./mailer');
-const fs = require('fs');
 
 module.exports.postData = (auth) => {
 
@@ -58,5 +57,6 @@ module.exports.postData = (auth) => {
             mailer.sendMail(JSON.stringify(response), 'Import Exhaustivity for CS and HGR');
         }).catch(err => {
             mailer.sendMail('Fail!!! Import Exhaustivity for CS and HGR', 'Fail!!! Import Exhaustivity for CS and HGR' + JSON.stringify(err));
-        });
-}
+});
+
+};

@@ -1,4 +1,6 @@
+require('dotenv').config();
 const schedule = require('node-schedule');
+const debug = require('debug')('dhis2-automatic-importations');
 
 // calling file exten
 const amoxycilline_min = require('./amoxycilline_min');
@@ -12,7 +14,11 @@ const exhaustivite_CS_HGR = require('./exhaustivite_CS_HGR');
 const exhaustivite_all = require('./exhaustivite_all');
 const codesa = require('./codesa');
 const score_80 = require('./score_80');
-const credential = require('./credentials/credentials.json');
+
+const auth = {
+  user: process.env.DHIS2_USER,
+  pass: process.env.DHIS2_PASSWORD,
+};
 
 // Schedule execution
 const rule = new schedule.RecurrenceRule();
@@ -21,8 +27,8 @@ rule.hour = 0;
 rule.minute = 0;
 
 function ExecuteAndCatchErrors() {
+  debug('Starting ExecuteAndCatchErrors()');
   try {
-    const auth = credential.DHIS2;
     completude_fosa.postData(auth);
     completude_pcima.postData(auth);
     completude_cs.postData(auth);
@@ -33,16 +39,19 @@ function ExecuteAndCatchErrors() {
     exhaustivite_nut.postData(auth);
     exhaustivite_CS_HGR.postData(auth);
     exhaustivite_all.postData(auth);
-score_80.postData(auth);
+    score_80.postData(auth);
   } catch (error) {
-    console.log('global error occurred');
-    console.log(error);
+    debug('A global error occurred.');
+    debug(error);
   }
 }
 
-console.log('Starting Script');
+debug('Starting script');
+debug(`Next run of rule at : ${rule.nextInvocationDate().toLocaleString()}`);
+
+
 // Using function
 schedule.scheduleJob(rule, () => {
-  console.log('Scheduling jobs');
+  debug('Starting jobs...');
   ExecuteAndCatchErrors();
 });
