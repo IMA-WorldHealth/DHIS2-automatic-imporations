@@ -8,7 +8,7 @@ module.exports.postData = (auth) => {
         url: `https://ima-assp.org/api/analytics/dataValueSet.json`
     });
 
-    const query = `dimension=dx:vvzOIsNR5SE;eI7s8XvUore;twTFi7fp8wD;wMkTSZudDyO;pAWUuUgO5H0;HRQ10ivsurn;XNVeTlQHhBO;afE4UcxztvZ&dimension=pe:LAST_3_MONTHS&dimension=ou:OU_GROUP-UJJSPTVYQt6;s7ZjqzKnWsJ&displayProperty=NAME`;
+    const query = `dimension=dx:WgZr7FrDfVn;kGmdIbd3mbn;TkAGe7FvxzX;zcH4sipFcUr;V7bWComPcDJ;P9o3bL76s2r;PFCz0A2SBtd;cTLKwfG8pSv&dimension=pe:LAST_3_MONTHS&dimension=ou:OU_GROUP-UJJSPTVYQt6;s7ZjqzKnWsJ&displayProperty=NAME`;
     // download the Data                                                                                                                                                                                       
     api.analytics({
             query
@@ -17,8 +17,9 @@ module.exports.postData = (auth) => {
             const dataValues = source.dataValues;
             //const dataValues = request1.dataValues;
 
-            const dataElementval = ['vvzOIsNR5SE','eI7s8XvUore','twTFi7fp8wD','wMkTSZudDyO','pAWUuUgO5H0','HRQ10ivsurn','XNVeTlQHhBO','afE4UcxztvZ'];
-            const dataElementExh = ['WgZr7FrDfVn','kGmdIbd3mbn','TkAGe7FvxzX','zcH4sipFcUr','V7bWComPcDJ','P9o3bL76s2r','PFCz0A2SBtd','cTLKwfG8pSv'];
+            const dataElementval = ['WgZr7FrDfVn','kGmdIbd3mbn','TkAGe7FvxzX','zcH4sipFcUr','V7bWComPcDJ','P9o3bL76s2r','PFCz0A2SBtd','cTLKwfG8pSv'];
+            const dataElementExh = ['vvzOIsNR5SE','eI7s8XvUore','twTFi7fp8wD','wMkTSZudDyO','pAWUuUgO5H0','HRQ10ivsurn','XNVeTlQHhBO','afE4UcxztvZ'];
+           
 
             datasetMap = {};
 
