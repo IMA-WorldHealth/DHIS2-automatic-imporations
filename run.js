@@ -1,7 +1,15 @@
 // calling file exten
-const exhaustivite_nut = require('./exhaustivite_nut');
+require('dotenv').config();
+const debug = require('debug')('dhis2-automatic-importations');
+const completudeFosa = require('./exhaustivite_all');
 
-const credential = require('./credentials/credentials.json');
+const auth = {
+  user: process.env.DHIS2_USER,
+  pass: process.env.DHIS2_PASSWORD,
+};
 
-const auth = credential.DHIS2;
-exhaustivite_nut.postData(auth);
+(async () => {
+  debug('Running run()');
+  await completudeFosa.postData(auth);
+  debug('Running done.');
+})();

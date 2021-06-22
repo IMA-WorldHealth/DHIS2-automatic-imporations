@@ -22,7 +22,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node chrone.js"
+    "start": "node chrone.js",
+    "run": "node run.js"
   },
   "keywords": [
     "DHIS2"
