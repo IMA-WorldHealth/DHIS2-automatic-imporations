@@ -1,7 +1,7 @@
 // calling file exten
 require('dotenv').config();
 const debug = require('debug')('dhis2-automatic-importations');
-const completudeFosa = require('./exhaustivite_all');
+const completudeFosa = require('./exhaustivite_CS_HGR');
 
 const auth = {
   user: process.env.DHIS2_USER,

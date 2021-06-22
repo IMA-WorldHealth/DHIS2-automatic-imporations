@@ -1,3 +1,4 @@
+const fs = require('fs');
 const API = require('./lib/dhis2-api');
 const mailer = require('./mailer');
 
@@ -19,7 +20,7 @@ module.exports.postData = (auth) => {
 
             const dataElementval = ['WgZr7FrDfVn','kGmdIbd3mbn','TkAGe7FvxzX','zcH4sipFcUr','V7bWComPcDJ','P9o3bL76s2r','PFCz0A2SBtd','cTLKwfG8pSv'];
             const dataElementExh = ['vvzOIsNR5SE','eI7s8XvUore','twTFi7fp8wD','wMkTSZudDyO','pAWUuUgO5H0','HRQ10ivsurn','XNVeTlQHhBO','afE4UcxztvZ'];
-           
+            
 
             datasetMap = {};
 
@@ -32,7 +33,7 @@ module.exports.postData = (auth) => {
             const result = {
                 dataValues: []
             };
-
+            
             //console.log(mapping);
             dataValues.forEach(source => {
 
@@ -45,9 +46,9 @@ module.exports.postData = (auth) => {
                     "created": source.created
                 });
             });
-            
+            console.log("Run");
             fs.writeFileSync('./exhaustiviteCS-HGR.json', JSON.stringify(result));
-
+            
             return api.postData({
                 data: result,
                  url: 'https://ima-assp.org/api/dataValueSets?skipAudit=true'
