@@ -4,7 +4,7 @@
   "description": "A series of scripts to automate DHIS2 work for the team",
   "main": "chrone.js",
   "dependencies": {
-    "debug": "^4.3.1",
+    "debug": "^4.3.2",
     "dotenv": "^10.0.0",
     "lodash": "^4.17.21",
     "node-schedule": "^2.0.0",
