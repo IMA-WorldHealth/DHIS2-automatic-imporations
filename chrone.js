@@ -25,7 +25,7 @@ const auth = {
 // Schedule execution
 const rule = new schedule.RecurrenceRule();
 // rule.dayOfWeek = [0, new schedule.Range(4, 6)];
-rule.hour = 12;
+rule.hour = 00;
 rule.minute = 30;
 
 function ExecuteAndCatchErrors() {

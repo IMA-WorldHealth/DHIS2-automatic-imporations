@@ -9,7 +9,10 @@ module.exports.postData = (auth) => {
         url: `https://ima-assp.org/api/analytics/dataValueSet.json`
     });
 
-     const query = `dimension=dx:t2O2Sf4Kngw;DQiMxAlXTOe;w8zw7gMZQvu&dimension=pe:LAST_3_MONTHS&dimension=ou:OU_GROUP-WJ5VCUtdTtD;s7ZjqzKnWsJ&displayProperty=NAME`;
+    const PERIOD = 'LAST_3_MONTHS';
+    //const PERIOD = '202101;202102;202103';
+    const query = `dimension=dx:t2O2Sf4Kngw;DQiMxAlXTOe;w8zw7gMZQvu&dimension=pe:${PERIOD}&dimension=ou:OU_GROUP-WJ5VCUtdTtD;s7ZjqzKnWsJ&displayProperty=NAME`;
+    //const query = `dimension=dx:t2O2Sf4Kngw;DQiMxAlXTOe;w8zw7gMZQvu&dimension=pe:LAST_3_MONTHS&dimension=ou:OU_GROUP-WJ5VCUtdTtD;s7ZjqzKnWsJ&displayProperty=NAME`;
     // download the Data                                                                                                                                                                                       
     api.analytics({
             query
