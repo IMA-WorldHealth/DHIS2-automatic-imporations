@@ -5,6 +5,8 @@
 .idea/*
 *~
 
+package-lock.json
+
 
 # ignore npm/node modules
 node_modules/
