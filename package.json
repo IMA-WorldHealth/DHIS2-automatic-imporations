@@ -8,7 +8,7 @@
     "dotenv": "^16.0.1",
     "lodash": "^4.17.21",
     "node-schedule": "^2.0.0",
-    "nodemailer": "^6.7.4",
+    "nodemailer": "^6.7.5",
     "q": "^1.5.1",
     "request": "^2.88.2",
     "request-promise-native": "^1.0.9",
